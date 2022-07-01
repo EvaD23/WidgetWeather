@@ -31,5 +31,42 @@ weatherRefresh();
 const btn = document.querySelector('button');
 btn.addEventListener('click', weatherUpdate);
 
+let container = document.querySelector('.container');
+
+container.onmousedown = function (event) {
+
+    let shiftX = event.clientX - container.getBoundingClientRect().left;
+    let shiftY = event.clientY - container.getBoundingClientRect().top;
+
+    container.style.position = 'absolute';
+    container.style.zIndex = 1000;
+    document.body.append(container)
+    moveAt(event.pageX, event.pageY);
+
+    // переносит контеинер на координаты (pageX, pageY),
+    // дополнительно учитывая изначальный сдвиг относительно указателя мыши
+    function moveAt(pageX, pageY) {
+        container.style.left = pageX - shiftX + 'px';
+        container.style.top = pageY - shiftY + 'px';
+    }
+
+    function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+    }
+
+    // передвигаем контеинер при событии mousemove
+    document.addEventListener('mousemove', onMouseMove);
+
+    // отпустить контеинер, удалить ненужные обработчики
+    container.onmouseup = function () {
+        document.removeEventListener('mousemove', onMouseMove);
+        container.onmouseup = null;
+    };
+
+};
+
+container.ondragstart = function () {
+    return false;
+};
 
 
